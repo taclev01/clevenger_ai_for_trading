@@ -416,24 +416,24 @@ for epoch in range(epochs):
             model.eval()
             #import pdb; pdb.set_trace()
             # TODO Implement: Print metrics
-            for valid_batch,valid_labels in dataloader(
+            for val_batch,val_labels in dataloader(
                 valid_features, valid_labels, batch_size=batch_size,sequence_length=seq_length, shuffle=True):
                 # Get validation loss
-                val_h = model.init_hidden(valid_labels.shape[0])
+                val_h = model.init_hidden(val_labels.shape[0])
                 #val_h = model.init_hidden(batch_size)
             
                 # Creating new variables for the hidden state, otherwise
                 # we'd backprop through the entire training history
                 val_h = tuple([each.data for each in val_h])
                 
-                valid_batch,valid_labels = valid_batch.to(device), valid_labels.to(device)
+                val_batch,val_labels = val_batch.to(device), val_labels.to(device)
                 
                 for each in val_h:
                     each.to(device)
                     
-                val_out, val_h = model.forward(valid_batch,val_h)
+                val_out, val_h = model.forward(val_batch,val_h)
                 
-                val_loss = criterion(val_out, valid_labels.long())
+                val_loss = criterion(val_out, val_labels.long())
                 
                 val_losses.append(val_loss.item())
                 
@@ -446,7 +446,7 @@ for epoch in range(epochs):
             print("Epoch: {}/{}...".format(epoch+1, epochs),
                   "Step: {}...".format(steps),
                   "Loss: {:.6f}...".format(loss.item()),
-                  "Val Loss: {:.6f}".format(np.mean(val_losses)))
+                  "Val Loss: {:.6f}".format(torch.mean(val_losses)))
 
 
 
